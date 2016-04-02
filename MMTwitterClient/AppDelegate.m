@@ -7,6 +7,17 @@
 //
 
 #import "AppDelegate.h"
+#import <Fabric/Fabric.h>
+#import <TwitterKit/TwitterKit.h>
+
+#import "MMTwitterDataManager.h"
+
+#import "MMTwitterManager.h"
+
+#import "MMTwitterLoginViewController.h"
+
+@import Accounts;
+
 
 @interface AppDelegate ()
 
@@ -17,6 +28,51 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    [Fabric with:@[[Twitter class]]];
+    
+    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+    
+    NSArray *accounts = [accountStore accountsWithAccountType:accountType];
+    
+    for (ACAccount *acc in accounts) {
+        NSLog(@"username %@", acc.username);
+    }
+    
+    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (granted) {
+                NSLog(@"access granted");
+                NSArray *twitterAccounts = [accountStore accountsWithAccountType:accountType];
+                
+                if (twitterAccounts.count > 0) {
+                    NSLog(@"Account Available");
+                    [[MMTwitterManager sharedManager] loginWithCompletionHandler:^(NSError *error){
+                        NSLog(@"Logged In");
+                    }];
+                    
+                } else {
+                    self.window.backgroundColor = [UIColor whiteColor];
+                    self.window.rootViewController.view.hidden = YES;
+                    
+                    NSLog(@"No Account Available");
+                    // show log in view here modally
+                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    
+                    MMTwitterLoginViewController *loginView = [storyboard instantiateViewControllerWithIdentifier:@"LoginView"];
+                    loginView.modalPresentationStyle = UIModalPresentationFullScreen;
+                    loginView.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+                    
+                    [self.window.rootViewController presentViewController:loginView animated:NO completion:nil];
+                    
+                }
+            }
+        });
+        
+    }];
+    
     return YES;
 }
 

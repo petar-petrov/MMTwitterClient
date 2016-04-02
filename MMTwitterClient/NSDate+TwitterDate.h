@@ -10,4 +10,6 @@
 
 @interface NSDate (TwitterDate)
 
+- (NSString *)relativeDateAsStringSinceNow;
+
 @end

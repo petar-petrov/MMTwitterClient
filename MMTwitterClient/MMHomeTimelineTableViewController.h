@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MMComposeTweetButtonTableViewController.h"
 
-@interface MMHomeTimelineTableViewController : UITableViewController
+@interface MMHomeTimelineTableViewController : MMComposeTweetButtonTableViewController
 
 @end

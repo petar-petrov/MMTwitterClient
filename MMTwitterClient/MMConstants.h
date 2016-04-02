@@ -8,6 +8,5 @@
 
 #import <Foundation/Foundation.h>
 
-@interface MMConstants : NSObject
-
-@end
+FOUNDATION_EXPORT NSString *const kDataStoreTweetEntityName;
+FOUNDATION_EXPORT NSString *const kDataStoreUserEntityName;

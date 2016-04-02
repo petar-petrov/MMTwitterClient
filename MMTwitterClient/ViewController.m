@@ -7,8 +7,20 @@
 //
 
 #import "ViewController.h"
+#import <TwitterKit/TwitterKit.h>
+
+#import "MMTwitterTimeLineTableViewController.h"
+
+#import "MMTwitterManager.h"
+
 
 @interface ViewController ()
+
+@property (strong, nonatomic) NSMutableArray *timeLine;
+@property (weak, nonatomic) IBOutlet UIButton *showTimelineButton;
+@property (weak, nonatomic) IBOutlet UIButton *loginButton;
+
+@property (assign, nonatomic, getter=isLoggedIn) BOOL loggedIn;
 
 @end
 
@@ -16,12 +28,29 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+    self.title = NSLocalizedString(@"Me!", nil);
+    
+    self.showTimelineButton.enabled = NO;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (IBAction)showTimeline:(id)sender {
+    [self performSegueWithIdentifier:@"showTimeline" sender:self];
+}
+
+- (IBAction)login:(id)sender {
+    if (self.loggedIn) {
+        [[MMTwitterManager sharedManager] logout];
+        self.showTimelineButton.enabled = NO;
+        [self.loginButton setTitle:NSLocalizedString(@"Log In", nil) forState:UIControlStateNormal];
+        self.loggedIn = NO;
+    } else {
+        [[MMTwitterManager sharedManager] loginWithCompletionHandler:^(NSError *error) {
+            self.showTimelineButton.enabled = YES;
+            [self.loginButton setTitle:NSLocalizedString(@"Log Out", nil) forState:UIControlStateNormal];
+            self.loggedIn = YES;
+        }];
+    }
 }
 
 @end

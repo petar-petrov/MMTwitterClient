@@ -8,6 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
+#import "Tweet.h"
+#import "User.h"
+#import "MMConstants.h"
+
 @interface MMTwitterDataManager : NSObject
+
++ (instancetype)sharedManager;
+
+- (void)addTweets:(NSArray *)tweets userTimeline:(BOOL)userTimeline;
+
+- (NSArray <Tweet *>*)getUserTimeline;
+- (NSArray <Tweet *>*)getHomeTimeline;
+
+- (NSUInteger)sinceIDForUserTimeline;
+- (NSUInteger)sinceIDForHomeTimeline;
+
+
+- (User *)getUserForID:(NSNumber *)userID;
 
 @end

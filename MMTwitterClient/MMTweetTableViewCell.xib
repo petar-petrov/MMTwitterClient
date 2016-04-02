@@ -51,7 +51,7 @@
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cJ3-Pz-qqh" customClass="MMLinkLabel">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cJ3-Pz-qqh" customClass="MMLinkLabel">
                                                 <rect key="frame" x="56" y="66" width="236" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -66,6 +66,7 @@
                                             <constraint firstItem="cJ3-Pz-qqh" firstAttribute="top" secondItem="pig-uB-5ij" secondAttribute="bottom" constant="8" id="Z0d-Cx-90p"/>
                                             <constraint firstAttribute="trailing" secondItem="0o0-PB-unJ" secondAttribute="trailing" constant="8" id="Ze6-YB-UmC"/>
                                             <constraint firstItem="oTn-ka-BzM" firstAttribute="leading" secondItem="CRn-1h-W8a" secondAttribute="leading" constant="8" id="dIu-Qh-gSc"/>
+                                            <constraint firstAttribute="bottom" secondItem="cJ3-Pz-qqh" secondAttribute="bottom" constant="21" id="dt0-YI-HUO"/>
                                             <constraint firstItem="cJ3-Pz-qqh" firstAttribute="leading" secondItem="pig-uB-5ij" secondAttribute="leading" id="hlM-W2-Xih"/>
                                             <constraint firstItem="oTn-ka-BzM" firstAttribute="top" secondItem="CRn-1h-W8a" secondAttribute="top" constant="8" id="laB-9G-9Yl"/>
                                             <constraint firstItem="0o0-PB-unJ" firstAttribute="leading" secondItem="glB-4P-Dd1" secondAttribute="trailing" constant="8" id="lqD-ld-FFI"/>
@@ -89,7 +90,7 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="containerView" destination="CRn-1h-W8a" id="NXe-hO-Cx2"/>
-                <outlet property="message" destination="cJ3-Pz-qqh" id="Mvt-Qb-EiE"/>
+                <outlet property="message" destination="cJ3-Pz-qqh" id="qtS-ma-Nab"/>
                 <outlet property="nameLabel" destination="glB-4P-Dd1" id="TwI-L5-DlI"/>
                 <outlet property="profileImageView" destination="oTn-ka-BzM" id="ttW-JT-uQ6"/>
                 <outlet property="relativeDateLabel" destination="0o0-PB-unJ" id="dZR-WZ-PLp"/>

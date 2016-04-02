@@ -8,6 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+@import CoreData;
+
 @interface MMTwitterDataStore : NSObject
+
++ (instancetype)defaultStore;
+
+@property (nonatomic, readonly) NSManagedObjectContext *mainContext;
+@property (nonatomic, readonly) NSManagedObjectContext *defaultPrivateContext;
+
+- (void)saveContext;
+
+- (NSManagedObjectContext *)privateContext;
 
 @end

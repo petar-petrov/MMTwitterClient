@@ -10,4 +10,7 @@
 
 @interface NSMutableAttributedString (TwitterLinks)
 
+- (NSArray *)highlightLinksWithAttributtes:(NSDictionary *)attributes;
+- (NSArray *)highlightHashtagsWithAttributtes:(NSDictionary *)attributes;
+
 @end

@@ -8,7 +8,11 @@
 
 #import "MMTwitterTimeLineTableViewController.h"
 
+#import "MMTwitterManager.h"
+
 @interface MMTwitterTimeLineTableViewController ()
+
+@property (strong, nonatomic) NSArray * timelineTweets;
 
 @end
 
@@ -16,6 +20,19 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    [[MMTwitterManager sharedManager] getUserTimelineWithCompletion:^(NSArray *tweets,NSUInteger sinceID, NSError *error){
+        NSLog(@"since id %ld", sinceID);
+        
+        self.timelineTweets = tweets;
+        [self.tableView reloadData];
+    }];
+    
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"Refresh", nil)];
+    [refreshControl addTarget:self action:@selector(didRefresh) forControlEvents:UIControlEventValueChanged];
+    
+    self.refreshControl = refreshControl;
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -31,25 +48,19 @@
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Incomplete implementation, return the number of sections
-    return 0;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete implementation, return the number of rows
-    return 0;
+    return [self.timelineTweets count];
 }
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     
-    // Configure the cell...
+    cell.textLabel.text = self.timelineTweets[indexPath.row];
     
     return cell;
 }
-*/
+
 
 /*
 // Override to support conditional editing of the table view.
@@ -94,5 +105,11 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+#pragma mark - Private
+
+- (void)didRefresh {
+    [self.refreshControl endRefreshing];
+}
 
 @end

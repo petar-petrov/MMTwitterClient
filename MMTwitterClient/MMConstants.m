@@ -8,6 +8,5 @@
 
 #import "MMConstants.h"
 
-@implementation MMConstants
-
-@end
+NSString *const kDataStoreTweetEntityName   = @"Tweet";
+NSString *const kDataStoreUserEntityName    = @"User";
