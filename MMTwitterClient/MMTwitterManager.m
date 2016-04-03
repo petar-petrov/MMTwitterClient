@@ -80,6 +80,8 @@ static NSString *const kTwitterAPIHomeTimelineURL   = @"https://api.twitter.com/
             NSLog(@"Login error: %@", [error localizedDescription]);
         }
         
+        [self storeUserIDToUserDefaults:[session userID]];
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             if (handler != nil) {
                 handler(nil);
@@ -98,6 +100,8 @@ static NSString *const kTwitterAPIHomeTimelineURL   = @"https://api.twitter.com/
         } else {
             NSLog(@"Login error: %@", [error localizedDescription]);
         }
+        
+        [self storeUserIDToUserDefaults:[session userID]];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             if (handler != nil) {
@@ -137,7 +141,7 @@ static NSString *const kTwitterAPIHomeTimelineURL   = @"https://api.twitter.com/
                 
                 timeline = [NSMutableArray array];
                 
-                [self.dataManager addTweets:json userTimeline:YES];
+                [self.dataManager addTweets:json];
                 
                 for (NSDictionary *dic in json) {
                     [timeline addObject:[dic objectForKey:@"text"]];
@@ -178,7 +182,7 @@ static NSString *const kTwitterAPIHomeTimelineURL   = @"https://api.twitter.com/
                 
                 timeline = [NSMutableArray array];
                 
-                [self.dataManager addTweets:json userTimeline:NO];
+                [self.dataManager addTweets:json];
                 
                 for (NSDictionary *dic in json) {
                     [timeline addObject:[dic objectForKey:@"text"]];
@@ -201,6 +205,17 @@ static NSString *const kTwitterAPIHomeTimelineURL   = @"https://api.twitter.com/
 
 - (void)postTweetWithText:(NSString *)text image:(UIImage *)image url:(NSURL *)url {
     
+}
+
+#pragma mark - Private
+
+- (void)storeUserIDToUserDefaults:(NSString *)userID {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    if ([userDefaults valueForKey:@"TwitterUserID"] == nil || ![[userDefaults valueForKey:@"TwitterUserID"] isEqualToString:userID]) {
+        
+        [userDefaults setObject:userID forKey:@"TwitterUserID"];
+    }
 }
 
 @end

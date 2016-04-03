@@ -59,7 +59,7 @@
 
 #pragma mark - Add/Delete Tweet/s
 
--(void)addTweets:(NSArray *)tweets userTimeline:(BOOL)userTimeline {
+-(void)addTweets:(NSArray *)tweets{
     
     [self.dataStore.defaultPrivateContext performBlock:^{
         if (tweets) {
@@ -70,7 +70,6 @@
                     BOOL flag = (index == (tweets.count - 1)) ? YES : NO;
                     
                     [self addTweet:tweets[index]
-                      userTimeline:userTimeline
                          inContext:self.dataStore.defaultPrivateContext
                               save:flag];
                 }
@@ -116,8 +115,10 @@
 
 #pragma mark - Private
 
-- (void)addTweet:(NSDictionary *)tweetInfo userTimeline:(BOOL)userTimeline inContext:(NSManagedObjectContext *)context save:(BOOL)flag {
+- (void)addTweet:(NSDictionary *)tweetInfo inContext:(NSManagedObjectContext *)context save:(BOOL)flag {
     Tweet *tweet = [self getTweetForID:tweetInfo[@"id"] inContext:context];
+    
+    
     
     if (tweet == nil) {
         tweet = [NSEntityDescription insertNewObjectForEntityForName:kDataStoreTweetEntityName inManagedObjectContext:context];
@@ -128,7 +129,6 @@
         tweet.text = [tweetInfo valueForKey:@"text"];
         tweet.retweeted = [tweetInfo valueForKey:@"retweeted"];
         tweet.tweetID = [tweetInfo valueForKey:@"id"];
-        tweet.isUserTimeline = @(userTimeline);
         
         if (tweetInfo[@"entities"][@"media"]) {
             tweet.mediaURL = tweetInfo[@"entities"][@"media"][0][@"media_url_https"];
@@ -136,6 +136,15 @@
         }
         
         tweet.hasUser = [self addUser:[tweetInfo valueForKey:@"user"] inContext:context];
+        
+        NSString *storedUserID = [[NSUserDefaults standardUserDefaults] valueForKey:@"TwitterUserID"];
+        NSString *userID = tweet.hasUser.userID.stringValue ;
+        
+        if ([userID isEqualToString:storedUserID]) {
+            tweet.isUserTimeline = @(YES);
+        } else {
+            tweet.isUserTimeline = @(NO);
+        }
         
         
         if ([self.greatestTweetIDNumber compare:(NSNumber *)tweetInfo[@"id"]] == NSOrderedAscending) {

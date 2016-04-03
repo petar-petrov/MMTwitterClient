@@ -16,7 +16,7 @@
 
 + (instancetype)sharedManager;
 
-- (void)addTweets:(NSArray *)tweets userTimeline:(BOOL)userTimeline;
+- (void)addTweets:(NSArray *)tweets;
 
 - (NSArray <Tweet *>*)getUserTimeline;
 - (NSArray <Tweet *>*)getHomeTimeline;
