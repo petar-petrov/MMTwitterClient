@@ -84,8 +84,10 @@
 //    [self.tableView registerClass:[MMTweetTableViewCell class] forCellReuseIdentifier:@"Cell"];
     [self.tableView registerNib:[UINib nibWithNibName:@"MMTweetTableViewCell" bundle:nil]
          forCellReuseIdentifier:@"Cell"];
+    [self.tableView registerNib:[UINib nibWithNibName:@"MMTweetWithImageTableViewCell" bundle:nil]
+         forCellReuseIdentifier:@"ImageCell"];
     
-    [self.tableView registerClass:[MMImageTweetTableViewCell class] forCellReuseIdentifier:@"ImageCell"];
+//    [self.tableView registerClass:[MMImageTweetTableViewCell class] forCellReuseIdentifier:@"ImageCell"];
 //    [self.tableView registerClass:[MMTweetWithImageTableViewCell class] forCellReuseIdentifier:@"ImageCell"];
     
     self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -122,7 +124,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:indexPath];
     
-    UITableViewCell *cell = nil;
+    MMTweetTableViewCell *cell = nil;
     
     
 //    cell = [tableView dequeueReusableCellWithIdentifier:@"ImageCell"];
@@ -142,7 +144,7 @@
 
 #pragma mark - Private
 
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+- (void)configureCell:(MMTweetTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:indexPath];
@@ -154,42 +156,40 @@
     NSString *screenName = [@"@" stringByAppendingString:user.screenName];
     NSString *relativeDate = [tweet.createdAt relativeDateAsStringSinceNow];
     
-    if ([cell isMemberOfClass:[MMImageTweetTableViewCell class]]) {
-        MMImageTweetTableViewCell *imageCell = (MMImageTweetTableViewCell *)cell;
-        
-        imageCell.nameLabel.text = user.name;
-        imageCell.screenNameLabel.text = screenName;
-        imageCell.relativeDateLabel.text = relativeDate;
-        imageCell.message.attributedText = attributedMessage;
-        imageCell.message.delegate = self;
-        
-        [imageCell.profileImageView psetImageWithURLString:user.profileImageURL placeholder:nil];
-        [imageCell.tweetImageView psetImageWithURLString:tweet.mediaURL placeholder:nil];
-    } else {
-        MMTweetTableViewCell *basicCell = (MMTweetTableViewCell *)cell;
-        
-        basicCell.nameLabel.text = user.name;
-        basicCell.screenNameLabel.text = screenName;
-        basicCell.relativeDateLabel.text = relativeDate;
-        basicCell.message.attributedText = attributedMessage;
-        basicCell.message.delegate = self;
-        
-        [basicCell.profileImageView psetImageWithURLString:user.profileImageURL placeholder:nil];
+//    if ([cell isMemberOfClass:[MMImageTweetTableViewCell class]]) {
+//        MMImageTweetTableViewCell *imageCell = (MMImageTweetTableViewCell *)cell;
+//        
+//        imageCell.nameLabel.text = user.name;
+//        imageCell.screenNameLabel.text = screenName;
+//        imageCell.relativeDateLabel.text = relativeDate;
+//        imageCell.message.attributedText = attributedMessage;
+//        imageCell.message.delegate = self;
+//        
+//        [imageCell.profileImageView psetImageWithURLString:user.profileImageURL placeholder:nil];
+//        [imageCell.tweetImageView psetImageWithURLString:tweet.mediaURL placeholder:nil];
+//    } else {
+//        MMTweetTableViewCell *basicCell = (MMTweetTableViewCell *)cell;
+//        
+//        basicCell.nameLabel.text = user.name;
+//        basicCell.screenNameLabel.text = screenName;
+//        basicCell.relativeDateLabel.text = relativeDate;
+//        basicCell.message.attributedText = attributedMessage;
+//        basicCell.message.delegate = self;
+//        
+//        [basicCell.profileImageView psetImageWithURLString:user.profileImageURL placeholder:nil];
+//    }
+    
+    if ([cell isMemberOfClass:[MMTweetWithImageTableViewCell class]]) {
+        [((MMTweetWithImageTableViewCell *)cell).tweetImageView psetImageWithURLString:tweet.mediaURL placeholder:nil];
     }
     
-//    if ([cell isMemberOfClass:[MMTweetWithImageTableViewCell class]]) {
-//        [((MMTweetWithImageTableViewCell *)cell).tweetImageView psetImageWithURLString:tweet.mediaURL placeholder:nil];
-//    }
-//    
-//    MMTweetTableViewCell *tweetCell = (MMTweetTableViewCell *)cell;
-//    
-//    tweetCell.nameLabel.text = user.name;
-//    tweetCell.screenNameLabel.text = screenName;
-//    tweetCell.relativeDateLabel.text = relativeDate;
-//    tweetCell.message.attributedText = attributedMessage;
-//    tweetCell.message.delegate = self;
-//
-//    [tweetCell.profileImageView psetImageWithURLString:user.profileImageURL placeholder:nil];
+    cell.nameLabel.text = user.name;
+    cell.screenNameLabel.text = screenName;
+    cell.relativeDateLabel.text = relativeDate;
+    cell.message.attributedText = attributedMessage;
+    cell.message.delegate = self;
+
+    [cell.profileImageView psetImageWithURLString:user.profileImageURL placeholder:nil];
     
 //    if ([cell isMemberOfClass:[MMImageTweetTableViewCell class]]) {
 //        MMImageTweetTableViewCell *imageCell = (MMImageTweetTableViewCell *)cell;

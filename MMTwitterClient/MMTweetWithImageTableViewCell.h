@@ -10,6 +10,6 @@
 
 @interface MMTweetWithImageTableViewCell : MMTweetTableViewCell
 
-@property (strong, nonatomic, readonly) UIImageView *tweetImageView;
+@property (weak, nonatomic, readonly) IBOutlet UIImageView *tweetImageView;
 
 @end

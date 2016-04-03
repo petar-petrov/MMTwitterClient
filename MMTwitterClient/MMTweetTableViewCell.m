@@ -126,6 +126,16 @@
 //    [super updateConstraints];
 //}
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    self.profileImageView.layer.cornerRadius = 5.0f;
+    self.profileImageView.layer.masksToBounds = YES;
+    self.containerView.layer.cornerRadius = 3.0f;
+    
+    [super layoutSubviews];
+}
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 

@@ -12,6 +12,7 @@
 		D1A82CF91CAD678C009EDB75 /* NSDate+TwitterDate.m in Sources */ = {isa = PBXBuildFile; fileRef = D1A82CF81CAD678C009EDB75 /* NSDate+TwitterDate.m */; };
 		D1A82CFC1CAE8E96009EDB75 /* MMTweetWithImageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D1A82CFB1CAE8E96009EDB75 /* MMTweetWithImageTableViewCell.m */; };
 		D1A82CFE1CAECB68009EDB75 /* MMTweetTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D1A82CFD1CAECB68009EDB75 /* MMTweetTableViewCell.xib */; };
+		D1A82D001CB00EF0009EDB75 /* MMTweetWithImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D1A82CFF1CB00EF0009EDB75 /* MMTweetWithImageTableViewCell.xib */; };
 		D1AE48381CA57345002F0B69 /* MMHomeTimelineTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1AE48371CA57345002F0B69 /* MMHomeTimelineTableViewController.m */; };
 		D1AE483B1CA58D90002F0B69 /* MMTweetTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D1AE483A1CA58D90002F0B69 /* MMTweetTableViewCell.m */; };
 		D1AE483E1CA5A28A002F0B69 /* UIImageView+Networking.m in Sources */ = {isa = PBXBuildFile; fileRef = D1AE483D1CA5A28A002F0B69 /* UIImageView+Networking.m */; };
@@ -70,6 +71,7 @@
 		D1A82CFA1CAE8E96009EDB75 /* MMTweetWithImageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTweetWithImageTableViewCell.h; sourceTree = "<group>"; };
 		D1A82CFB1CAE8E96009EDB75 /* MMTweetWithImageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTweetWithImageTableViewCell.m; sourceTree = "<group>"; };
 		D1A82CFD1CAECB68009EDB75 /* MMTweetTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMTweetTableViewCell.xib; sourceTree = "<group>"; };
+		D1A82CFF1CB00EF0009EDB75 /* MMTweetWithImageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMTweetWithImageTableViewCell.xib; sourceTree = "<group>"; };
 		D1AE48361CA57345002F0B69 /* MMHomeTimelineTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMHomeTimelineTableViewController.h; sourceTree = "<group>"; };
 		D1AE48371CA57345002F0B69 /* MMHomeTimelineTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMHomeTimelineTableViewController.m; sourceTree = "<group>"; };
 		D1AE48391CA58D90002F0B69 /* MMTweetTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTweetTableViewCell.h; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				D1A82CFD1CAECB68009EDB75 /* MMTweetTableViewCell.xib */,
 				D1A82CFA1CAE8E96009EDB75 /* MMTweetWithImageTableViewCell.h */,
 				D1A82CFB1CAE8E96009EDB75 /* MMTweetWithImageTableViewCell.m */,
+				D1A82CFF1CB00EF0009EDB75 /* MMTweetWithImageTableViewCell.xib */,
 				D1AE48471CA96157002F0B69 /* MMImageTweetTableViewCell.h */,
 				D1AE48481CA96157002F0B69 /* MMImageTweetTableViewCell.m */,
 				D17E5FCF1CABF761008B94FB /* MMLinkLabel.h */,
@@ -417,6 +420,7 @@
 				D1A82CFE1CAECB68009EDB75 /* MMTweetTableViewCell.xib in Resources */,
 				D1DE6D351CA1771C00F9DB93 /* TwitterKitResources.bundle in Resources */,
 				D1DE6D0B1CA1768C00F9DB93 /* LaunchScreen.storyboard in Resources */,
+				D1A82D001CB00EF0009EDB75 /* MMTweetWithImageTableViewCell.xib in Resources */,
 				D1DE6D081CA1768C00F9DB93 /* Assets.xcassets in Resources */,
 				D1DE6D061CA1768C00F9DB93 /* Main.storyboard in Resources */,
 			);

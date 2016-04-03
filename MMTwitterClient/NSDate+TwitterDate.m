@@ -31,7 +31,7 @@
         return @"Yesterday";
     } else if (components.hour > 0) {
         return [NSString stringWithFormat:@"%ldh", (long)components.hour];
-    } else if (components.minute > 0) {
+    } else if (components.minute > 5) {
         return [NSString stringWithFormat:@"%ldm", (long)components.minute];
     } else {
         return @"Just Now";
