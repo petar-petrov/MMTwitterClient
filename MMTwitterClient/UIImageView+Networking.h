@@ -10,6 +10,7 @@
 @interface UIImageView (Networking)
 
 - (void)psetImageWithURLString:(NSString * _Nullable)urlString placeholder:(UIImage * _Nullable)placeholderImage;
+- (void)psetImageWithURLString:(NSString * _Nullable)urlString placeholder:(UIImage * _Nullable)placeholderImage compeletionHandler:(void (^ _Nullable)(UIImage * _Nullable image))handler;
 - (void)psetImageWithURL:(NSURL * _Nullable)url placeholder:(UIImage * _Nullable)placeholderImage;
 
 @end

@@ -10,3 +10,6 @@
 
 NSString *const kDataStoreTweetEntityName   = @"Tweet";
 NSString *const kDataStoreUserEntityName    = @"User";
+
+NSString *const kTwitterHomeTimelineKey = @"kTwitterHomeTimelineKey";
+NSString *const kTwitterUserTimelineKey = @"kTwitterUserTimelineKey";

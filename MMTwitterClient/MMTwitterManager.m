@@ -10,6 +10,7 @@
 #import <TwitterKit/TwitterKit.h>
 
 #import "MMTwitterDataManager.h"
+#import "MMConstants.h"
 
 
 @interface MMTwitterManager()
@@ -153,6 +154,8 @@ static NSString *const kTwitterAPIHomeTimelineURL   = @"https://api.twitter.com/
                 self.greatestTweetID = sinceIDInteger;
             }
             
+            [self updateLastUpdatedDateForTimelineKey:kTwitterUserTimelineKey];
+            
             if (handler != nil) {
                 handler([timeline copy], sinceIDInteger, connectionError);
             }
@@ -194,6 +197,8 @@ static NSString *const kTwitterAPIHomeTimelineURL   = @"https://api.twitter.com/
                 self.greatestHomeTimelineTweetID = sinceIDInteger;
             }
             
+            [self updateLastUpdatedDateForTimelineKey:kTwitterHomeTimelineKey];
+            
             if (handler != nil) {
                 handler([timeline copy], sinceIDInteger, connectionError);
             }
@@ -215,7 +220,15 @@ static NSString *const kTwitterAPIHomeTimelineURL   = @"https://api.twitter.com/
     if ([userDefaults valueForKey:@"TwitterUserID"] == nil || ![[userDefaults valueForKey:@"TwitterUserID"] isEqualToString:userID]) {
         
         [userDefaults setObject:userID forKey:@"TwitterUserID"];
+        [userDefaults synchronize];
     }
+}
+
+- (void)updateLastUpdatedDateForTimelineKey:(NSString *)type {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    [userDefaults setObject:[NSDate date] forKey:type];
+    [userDefaults synchronize];
 }
 
 @end

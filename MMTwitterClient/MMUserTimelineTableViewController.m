@@ -13,6 +13,7 @@
 #import "Tweet.h"
 #import "User.h"
 
+#import "MMImageDetailsViewController.h"
 #import "MMTweetTableViewCell.h"
 #import "MMTweetWithImageTableViewCell.h"
 #import "MMImageTweetTableViewCell.h"
@@ -29,6 +30,8 @@
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) MMTwitterDataStore *dataStore;
+
+@property (strong, nonatomic) MMTweetWithImageTableViewCell *dummyImageCell;
 
 
 @end
@@ -85,19 +88,20 @@ static NSString *const kTableViewCellIdentifier = @"UserTimelineCell";
         NSLog(@"Unresolved error %@ : %@", error, [error userInfo]);
         abort();
     }
-    
-//    [self.tableView registerClass:[MMTweetTableViewCell class] forCellReuseIdentifier:kTableViewCellIdentifier];
-//    [self.tableView registerClass:[MMImageTweetTableViewCell class] forCellReuseIdentifier:@"ImageCell"];
 
     [self.tableView registerNib:[UINib nibWithNibName:@"MMTweetTableViewCell" bundle:nil]
          forCellReuseIdentifier:kTableViewCellIdentifier];
     [self.tableView registerNib:[UINib nibWithNibName:@"MMTweetWithImageTableViewCell" bundle:nil]
          forCellReuseIdentifier:@"ImageCell"];
-    
-    self.tableView.rowHeight = UITableViewAutomaticDimension;
 
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(didRefreshUserTimeline:) forControlEvents:UIControlEventValueChanged];
+    
+    NSString *title = [((NSDate *)[[NSUserDefaults standardUserDefaults] valueForKey:kTwitterHomeTimelineKey]) dateAsStringFormattedForRefreshControllTitle];
+    
+    if (title) {
+        refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:title];
+    }
     
     self.refreshControl = refreshControl;
 }
@@ -107,12 +111,34 @@ static NSString *const kTableViewCellIdentifier = @"UserTimelineCell";
     // Dispose of any resources that can be recreated.
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"showUserTimelineImage"]) {
+
+    }
+}
+
 #pragma mark - UITableViewDelegate
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {    
+    return UITableViewAutomaticDimension;
+}
 
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 120.0f;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    MMTweetTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    
+    if ([cell isMemberOfClass:[MMTweetWithImageTableViewCell class]]) {
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        
+        MMImageDetailsViewController *dvc = [storyboard instantiateViewControllerWithIdentifier:@"ImageViewController"];
+        dvc.tweetInfo = (Tweet *)[self.fetchedResultsController objectAtIndexPath:indexPath];
+        
+        [self presentViewController:dvc animated:YES completion:nil];
+    }
+}
 
 #pragma mark - Table view data source
 
@@ -154,29 +180,6 @@ static NSString *const kTableViewCellIdentifier = @"UserTimelineCell";
     NSString *screenName = [@"@" stringByAppendingString:user.screenName];
     NSString *relativeDate = [tweet.createdAt relativeDateAsStringSinceNow];
     
-//    if ([cell isMemberOfClass:[MMImageTweetTableViewCell class]]) {
-//        MMImageTweetTableViewCell *imageCell = (MMImageTweetTableViewCell *)cell;
-//        
-//        imageCell.nameLabel.text = user.name;
-//        imageCell.screenNameLabel.text = screenName;
-//        imageCell.relativeDateLabel.text = relativeDate;
-//        imageCell.message.attributedText = attributedMessage;
-//        imageCell.message.delegate = self;
-//        
-//        [imageCell.profileImageView psetImageWithURLString:user.profileImageURL placeholder:nil];
-//        [imageCell.tweetImageView psetImageWithURLString:tweet.mediaURL placeholder:nil];
-//    } else {
-//        MMTweetTableViewCell *basicCell = (MMTweetTableViewCell *)cell;
-//        
-//        basicCell.nameLabel.text = user.name;
-//        basicCell.screenNameLabel.text = screenName;
-//        basicCell.relativeDateLabel.text = relativeDate;
-//        basicCell.message.attributedText = attributedMessage;
-//        basicCell.message.delegate = self;
-//        
-//        [basicCell.profileImageView psetImageWithURLString:user.profileImageURL placeholder:nil];
-//    }
-    
     if ([cell isMemberOfClass:[MMTweetWithImageTableViewCell class]]) {
         [((MMTweetWithImageTableViewCell *)cell).tweetImageView psetImageWithURLString:tweet.mediaURL placeholder:nil];
     }
@@ -192,7 +195,10 @@ static NSString *const kTableViewCellIdentifier = @"UserTimelineCell";
 
 - (void)didRefreshUserTimeline:(id)sender {
     [[MMTwitterManager sharedManager] getUserTimelineWithCompletion:^(NSArray *tweets, NSUInteger sinceID, NSError *error) {
-        NSLog(@"%@", tweets);
+//        NSLog(@"%@", tweets);
+        NSString *title = [((NSDate *)[[NSUserDefaults standardUserDefaults] valueForKey:kTwitterHomeTimelineKey]) dateAsStringFormattedForRefreshControllTitle];
+        self.refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:title];
+        
         [self.refreshControl endRefreshing];
     }];
 }

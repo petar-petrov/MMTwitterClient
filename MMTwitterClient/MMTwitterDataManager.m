@@ -146,7 +146,6 @@
             tweet.isUserTimeline = @(NO);
         }
         
-        
         if ([self.greatestTweetIDNumber compare:(NSNumber *)tweetInfo[@"id"]] == NSOrderedAscending) {
             self.greatestTweetIDNumber = tweetInfo[@"id"];
         }

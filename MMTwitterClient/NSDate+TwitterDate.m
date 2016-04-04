@@ -40,4 +40,11 @@
     return nil;
 }
 
+- (NSString *)dateAsStringFormattedForRefreshControllTitle {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"YYYY MMM dd HH:mm:ss";
+    
+    return [dateFormatter stringFromDate:self];
+}
+
 @end

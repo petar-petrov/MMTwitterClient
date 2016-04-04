@@ -12,4 +12,6 @@
 
 - (NSString *)relativeDateAsStringSinceNow;
 
+- (NSString *)dateAsStringFormattedForRefreshControllTitle;
+
 @end

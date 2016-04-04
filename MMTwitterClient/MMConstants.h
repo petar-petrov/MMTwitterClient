@@ -10,3 +10,6 @@
 
 FOUNDATION_EXPORT NSString *const kDataStoreTweetEntityName;
 FOUNDATION_EXPORT NSString *const kDataStoreUserEntityName;
+
+FOUNDATION_EXPORT NSString *const kTwitterHomeTimelineKey;
+FOUNDATION_EXPORT NSString *const kTwitterUserTimelineKey;

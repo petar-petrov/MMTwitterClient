@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D17E5FD11CABF761008B94FB /* MMLinkLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = D17E5FD01CABF761008B94FB /* MMLinkLabel.m */; };
 		D17E5FD71CAC10AE008B94FB /* NSMutableAttributedString+TwitterLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = D17E5FD61CAC10AE008B94FB /* NSMutableAttributedString+TwitterLinks.m */; };
+		D1A1D1E21CB296BA005BC122 /* MMImageDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1A1D1E11CB296BA005BC122 /* MMImageDetailsViewController.m */; };
 		D1A82CF91CAD678C009EDB75 /* NSDate+TwitterDate.m in Sources */ = {isa = PBXBuildFile; fileRef = D1A82CF81CAD678C009EDB75 /* NSDate+TwitterDate.m */; };
 		D1A82CFC1CAE8E96009EDB75 /* MMTweetWithImageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D1A82CFB1CAE8E96009EDB75 /* MMTweetWithImageTableViewCell.m */; };
 		D1A82CFE1CAECB68009EDB75 /* MMTweetTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D1A82CFD1CAECB68009EDB75 /* MMTweetTableViewCell.xib */; };
@@ -66,6 +67,8 @@
 		D17E5FD01CABF761008B94FB /* MMLinkLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMLinkLabel.m; sourceTree = "<group>"; };
 		D17E5FD51CAC10AE008B94FB /* NSMutableAttributedString+TwitterLinks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableAttributedString+TwitterLinks.h"; sourceTree = "<group>"; };
 		D17E5FD61CAC10AE008B94FB /* NSMutableAttributedString+TwitterLinks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableAttributedString+TwitterLinks.m"; sourceTree = "<group>"; };
+		D1A1D1E01CB296BA005BC122 /* MMImageDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMImageDetailsViewController.h; sourceTree = "<group>"; };
+		D1A1D1E11CB296BA005BC122 /* MMImageDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMImageDetailsViewController.m; sourceTree = "<group>"; };
 		D1A82CF71CAD678C009EDB75 /* NSDate+TwitterDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+TwitterDate.h"; sourceTree = "<group>"; };
 		D1A82CF81CAD678C009EDB75 /* NSDate+TwitterDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+TwitterDate.m"; sourceTree = "<group>"; };
 		D1A82CFA1CAE8E96009EDB75 /* MMTweetWithImageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTweetWithImageTableViewCell.h; sourceTree = "<group>"; };
@@ -252,6 +255,8 @@
 		D1DE6D3A1CA18F4D00F9DB93 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				D1A1D1E01CB296BA005BC122 /* MMImageDetailsViewController.h */,
+				D1A1D1E11CB296BA005BC122 /* MMImageDetailsViewController.m */,
 				D1DE6D011CA1768C00F9DB93 /* ViewController.h */,
 				D1DE6D021CA1768C00F9DB93 /* ViewController.m */,
 				D1DE6D371CA18F4100F9DB93 /* MMTwitterTimeLineTableViewController.h */,
@@ -482,6 +487,7 @@
 				D1AE483E1CA5A28A002F0B69 /* UIImageView+Networking.m in Sources */,
 				D1AE48381CA57345002F0B69 /* MMHomeTimelineTableViewController.m in Sources */,
 				D1DE6D441CA1A2A100F9DB93 /* MMTwitterDataStore.m in Sources */,
+				D1A1D1E21CB296BA005BC122 /* MMImageDetailsViewController.m in Sources */,
 				D1DE6D671CA53AA500F9DB93 /* MMUserTimelineTableViewController.m in Sources */,
 				D17E5FD71CAC10AE008B94FB /* NSMutableAttributedString+TwitterLinks.m in Sources */,
 				D1DE6D521CA2DAB900F9DB93 /* User+CoreDataProperties.m in Sources */,

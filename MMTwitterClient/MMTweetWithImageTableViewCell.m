@@ -10,57 +10,38 @@
 
 @interface MMTweetWithImageTableViewCell()
 
-@property (strong, nonatomic, readwrite) UIImageView *tweetImageView;
+@property (weak, nonatomic, readwrite) UIImageView *tweetImageView;
 
-//@property (assign, nonatomic, getter=isConstraintsSet) BOOL constraintsSet;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightConstraint_TweetImageView;
 
 @end
 
 @implementation MMTweetWithImageTableViewCell
 
-//- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-//    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    
+//    [self.tweetImageView addObserver:self forKeyPath:@"image" options:NSKeyValueObservingOptionNew context:nil];
+    
+}
+
+//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
+////    NSLog(@"image bounds %@", NSStringFromCGSize(self.tweetImageView.image.size) );
 //    
-//    if (self) {
-//        _tweetImageView = [[UIImageView alloc] init];
-//        _tweetImageView.backgroundColor = [UIColor lightGrayColor];
-//        _tweetImageView.contentMode = UIViewContentModeScaleAspectFill;
+//    [self layoutIfNeeded];
+//    if (self.tweetImageView.image.size.height > 0) {
+//        CGFloat containerWidth = self.containerView.bounds.size.width;
+////        CGFloat containerHeight = self.containerView.bounds.size.height;
 //        
-//        _tweetImageView.translatesAutoresizingMaskIntoConstraints = NO;
+//        CGFloat ratio = self.tweetImageView.image.size.height / self.tweetImageView.image.size.width;
 //        
-//        [self.containerView addSubview:_tweetImageView];
+////        NSLog(@"retion %.2f", ratio);
 //        
-//        self.constraintsSet = YES;
 //        
-//        [self setNeedsUpdateConstraints];
-//        
-//        for (NSLayoutConstraint *constraint in self.profileImageView.constraints) {
-//            if ([constraint.identifier isEqualToString:@"topConstraint_ProfileImageView"])
-//                constraint.active = NO;
-//        }
-//        
-//        self.constraintsSet = NO;
-//        
-//        [self setNeedsUpdateConstraints];
+//        self.heightConstraint_TweetImageView.constant = ratio * containerWidth;
 //    }
 //    
-//    return self;
-//}
-//
-//- (void)updateConstraints {
-//    
-//    if (!self.isConstraintsSet) {
-//        // Tweet Image Veiw constraints
-//        [self.tweetImageView.leadingAnchor constraintEqualToAnchor:self.containerView.leadingAnchor constant:0.0f].active = YES;
-//        [self.tweetImageView.topAnchor constraintEqualToAnchor:self.containerView.topAnchor constant:0.0f].active = YES;
-//        [self.tweetImageView.trailingAnchor constraintEqualToAnchor:self.containerView.trailingAnchor constant:0.0f].active = YES;
-//        [self.tweetImageView.heightAnchor constraintEqualToConstant:250.0f].active = YES;
-//        
-//        // Profile Image View contraints
-//        [self.profileImageView.topAnchor constraintEqualToAnchor:self.tweetImageView.bottomAnchor constant:8.0f].active = YES;
-//    }
-//    
-//    [super updateConstraints];
+//    [self layoutIfNeeded];
 //}
 
 - (void)layoutSubviews {
