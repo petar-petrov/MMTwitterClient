@@ -24,6 +24,8 @@ typedef void (^MMTwitterManagerImageUploadCompletedBlock)(NSString *mediaID, NSE
 - (void)loginWithCompletionHandler:(MMTwitterManagerCompletionBlock)handler;
 - (void)loginWithViewConroller:(UIViewController *)viewController completionHandler:(MMTwitterManagerCompletionBlock)handler;
 
+- (void)getTimelineForUser:(User *)user completion:(MMTwitterManagerCompletionBlock)handler;
+
 - (void)getUserTimelineWithCompletion:(MMTwitterManagerCompletionBlock)handler;
 - (void)getHomeTimelineWithCompletion:(MMTwitterManagerCompletionBlock)handler;
 

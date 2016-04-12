@@ -88,8 +88,6 @@ typedef void (^MMTwitterRequestSuccessBlock)(NSData *data, NSError *error);
 
 #pragma mark - Log In/Out
 
-
-
 - (void)loginWithCompletionHandler:(void (^)(NSError *error))handler {
     
     [[Twitter sharedInstance] logInWithCompletion:^(TWTRSession *session, NSError *error) {
@@ -133,17 +131,40 @@ typedef void (^MMTwitterRequestSuccessBlock)(NSData *data, NSError *error);
 
 #pragma mark - User's Timeline
 
-- (void)getUserTimelineWithCompletion:(void (^)(NSError *error))handler {
+- (void)getTimelineForUser:(User *)user completion:(MMTwitterManagerCompletionBlock)handler {
+    NSDictionary *parameters = @{@"user_id":user.userID.stringValue,
+                                 @"count":kTimelineRequestCount};
     
-    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithDictionary:@{@"count":kTimelineRequestCount}];
-    
-    [self sendTwitterRequestWithURL:kTwitterHomeTimelineKey
+    [self sendTwitterRequestWithURL:kTwitterAPIUserTimelineURL
                          parameters:parameters
                              method:kGetMethod
                           completed:^(NSData *data, NSError *error) {
                               id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-              
-                              [self.dataManager addTweets:json];
+                              NSLog(@"%@", json);
+                              
+                              [self.dataManager addTweets:json homeTimeline:NO];
+                              [self updateLastUpdatedDateForTimelineKey:kTwitterUserTimelineKey];
+                              
+                              if (handler != nil) {
+                                  handler(error);
+                              }
+                          }
+                             failed:handler];
+}
+
+- (void)getUserTimelineWithCompletion:(void (^)(NSError *error))handler {
+    
+    NSDictionary *parameters = @{@"user_id":self.client.userID,
+                                 @"count":kTimelineRequestCount};
+    
+    [self sendTwitterRequestWithURL:kTwitterAPIUserTimelineURL
+                         parameters:parameters
+                             method:kGetMethod
+                          completed:^(NSData *data, NSError *error) {
+                              id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+                              NSLog(@"%@", json);
+                              
+                              [self.dataManager addTweets:json homeTimeline:NO];
                               [self updateLastUpdatedDateForTimelineKey:kTwitterUserTimelineKey];
                           }
                              failed:handler];
@@ -151,7 +172,7 @@ typedef void (^MMTwitterRequestSuccessBlock)(NSData *data, NSError *error);
 
 - (void)getHomeTimelineWithCompletion:(void (^)(NSError *error))handler {
     
-    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithDictionary:@{@"count":kTimelineRequestCount}];
+    NSDictionary *parameters = @{@"count":kTimelineRequestCount};
     
     [self sendTwitterRequestWithURL:kTwitterAPIHomeTimelineURL
                          parameters:parameters
@@ -159,8 +180,12 @@ typedef void (^MMTwitterRequestSuccessBlock)(NSData *data, NSError *error);
                           completed:^(NSData *data, NSError *error){
                               id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
               
-                              [self.dataManager addTweets:json];
+                              [self.dataManager addTweets:json homeTimeline:YES];
                               [self updateLastUpdatedDateForTimelineKey:kTwitterHomeTimelineKey];
+                              
+                              if (handler != nil) {
+                                  handler(error);
+                              }
                           }
                              failed:handler];
 }

@@ -33,6 +33,10 @@
 - (void)awakeFromNib {
     // Initialization code
     self.contentView.backgroundColor = [[UIColor alloc]initWithRed: 0.835294 green: 0.835294 blue: 0.835294 alpha: 1 ];
+    
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapOnProfileImage:)];
+    
+    [self.profileImageView addGestureRecognizer:tapGestureRecognizer];
 }
 
 - (void)layoutSubviews {
@@ -75,6 +79,16 @@
 - (IBAction)moreButtonTapped:(id)sender {
     if ([self.delegate respondsToSelector:@selector(moreButtonTappedForCell:)]) {
         [self.delegate moreButtonTappedForCell:self];
+    }
+}
+
+#pragma mark - Gesture Action
+
+- (void)handleTapOnProfileImage:(UITapGestureRecognizer *)gesture {
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        if ([self.delegate respondsToSelector:@selector(didTapProfileImageForCell:)]) {
+            [self.delegate didTapProfileImageForCell:self];
+        }
     }
 }
 

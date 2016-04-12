@@ -1,44 +1,40 @@
 //
-//  MMHomeTimelineTableViewController.m
+//  MMProfileTableViewController.m
 //  MMTwitterClient
 //
-//  Created by Petar Petrov on 25/03/2016.
+//  Created by Petar Petrov on 12/04/2016.
 //  Copyright © 2016 Petar Petrov. All rights reserved.
 //
 
-#import "MMHomeTimelineTableViewController.h"
-#import "MMConstants.h"
-#import "MMTwitterDataStore.h"
-#import "Tweet.h"
-#import "User.h"
-
-#import "MMImageDetailsViewController.h"
 #import "MMProfileTableViewController.h"
-#import "MMTwitterManager.h"
-#import "MMTweetTableViewCell.h"
-#import "MMImageTweetTableViewCell.h"
-#import "MMTweetWithImageTableViewCell.h"
-#import "MMComposerViewController.h"
 
+#import "MMTwitterManager.h"
+#import "MMTwitterDataManager.h"
+#import "MMTwitterDataStore.h"
+#import "MMTwitterDataManager.h"
 #import "UIImageView+Networking.h"
-#import "NSDate+TwitterDate.h"
+
+#import "MMTweetTableViewCell.h"
+#import "MMTweetWithImageTableViewCell.h"
 
 #import "MMLinkLabel.h"
+#import "NSDate+TwitterDate.h"
 
-#import <TwitterKit/TwitterKit.h>
-
+@import QuartzCore;
 @import CoreData;
 @import SafariServices;
 
-@interface MMHomeTimelineTableViewController () <NSFetchedResultsControllerDelegate, MMLinkLabelDelegate, MMTweetTableViewCellDelegate>
+@interface MMProfileTableViewController () <NSFetchedResultsControllerDelegate, MMLinkLabelDelegate, MMTweetTableViewCellDelegate>
+
+@property (weak, nonatomic) IBOutlet UIImageView *profileBackgroundImageView;
+@property (weak, nonatomic) IBOutlet UIView *profileImageBackgroundView;
+@property (weak, nonatomic) IBOutlet UIImageView *profileImageView;
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
 @end
 
-@implementation MMHomeTimelineTableViewController
-
-#pragma mark - Custom Accessors
+@implementation MMProfileTableViewController
 
 - (NSFetchedResultsController *)fetchedResultsController {
     
@@ -47,7 +43,7 @@
         
         request.entity = [NSEntityDescription entityForName:kDataStoreTweetEntityName inManagedObjectContext:[MMTwitterDataStore defaultStore].mainContext];
         
-        request.predicate = [NSPredicate predicateWithFormat:@"retweeted == NO && (isHomeTimeline == YES || isUserTimeline == YES)"];
+        request.predicate = [NSPredicate predicateWithFormat:@"hasUser.userID == %@", self.user.userID];
         
         request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:NO]];
         
@@ -65,52 +61,49 @@
     return _fetchedResultsController;
 }
 
-#pragma mark - Life Cycle
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-//    self.title = NSLocalizedString(@"Home", nil);
-    UIImage *twitterImage = [UIImage imageNamed:@"twitter.png"];
+//    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+//                             forBarMetrics:UIBarMetricsDefault];
+//    self.navigationController.navigationBar.shadowImage = [UIImage new];
+//    self.navigationController.navigationBar.translucent = YES;
+//    
+//    self.automaticallyAdjustsScrollViewInsets = NO;
     
-    UIImageView *titleImageView = [[UIImageView alloc] initWithImage:twitterImage];
+    self.title = self.user.name;
     
-    self.navigationItem.titleView = titleImageView;
+    self.profileImageBackgroundView.layer.cornerRadius = 5.0f;
     
-    __autoreleasing NSError *error = nil;
-
-    if (![self.fetchedResultsController performFetch:&error]) {
-        NSLog(@"Unresolved error %@ : %@", error, [error userInfo]);
-        abort();
-    }
+    self.profileImageView.layer.cornerRadius = 5.0f;
+    self.profileImageView.layer.masksToBounds = YES;
     
-    self.tableView.backgroundColor =  [[UIColor alloc]initWithRed: 0.949020 green: 0.964706 blue: 0.976471 alpha: 1 ];
+    [self.profileImageView psetImageWithURLString:self.user.profileImageURL placeholder:nil];
+    
+    [self.profileBackgroundImageView psetImageWithURLString:self.user.profileBackgroundImageURL placeholder:nil];
     
     [self.tableView registerNib:[UINib nibWithNibName:@"MMTweetTableViewCell" bundle:nil]
          forCellReuseIdentifier:@"Cell"];
     [self.tableView registerNib:[UINib nibWithNibName:@"MMTweetWithImageTableViewCell" bundle:nil]
          forCellReuseIdentifier:@"ImageCell"];
     
-    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
-    [refreshControl addTarget:self action:@selector(didRefreshHomeTimeline:) forControlEvents:UIControlEventValueChanged];
+    [[MMTwitterManager sharedManager] getTimelineForUser:self.user completion:^(NSError *error){
+        
+    }];
     
-    NSString *title = [((NSDate *)[[NSUserDefaults standardUserDefaults] valueForKey:kTwitterHomeTimelineKey]) dateAsStringFormattedForRefreshControllTitle];
+    __autoreleasing NSError *fetchedResultsError = nil;
     
-    if (title) {
-        refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:title];
+    if (![self.fetchedResultsController performFetch:&fetchedResultsError]) {
+        NSLog(@"Unresolved error %@ : %@", fetchedResultsError, [fetchedResultsError userInfo]);
+        abort();
     }
     
-    self.refreshControl = refreshControl;
     
-    [self updateHomeTimeline];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (IBAction)done:(id)sender {
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
-
-#pragma mark - UITableViewDelegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -177,7 +170,7 @@
     cell.message.attributedText = attributedMessage;
     cell.message.delegate = self;
     cell.delegate = self;
-
+    
     [cell.profileImageView psetImageWithURLString:user.profileImageURL placeholder:nil];
     
     if ([tweet.hasUser.userID.stringValue isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"TwitterUserID"]]) {
@@ -198,27 +191,6 @@
     } else {
         [cell.likeButton setTitle:@"Like" forState:UIControlStateNormal];
     }
-}
-
-- (void)didRefreshHomeTimeline:(id)sender {
-    if ([MMTwitterManager sharedManager].isLoggedIn) {
-        [self updateHomeTimeline];
-    } else {
-        [self.refreshControl endRefreshing];
-    }
-    
-}
-
-- (void)updateHomeTimeline {
-    [[MMTwitterManager sharedManager] getHomeTimelineWithCompletion:^(NSError *error) {
-        NSString *title = [((NSDate *)[[NSUserDefaults standardUserDefaults] valueForKey:kTwitterHomeTimelineKey]) dateAsStringFormattedForRefreshControllTitle];
-        self.refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:title];
-        
-        if (self.refreshControl.isRefreshing) {
-            [self.refreshControl endRefreshing];
-        }
-        
-    }];
 }
 
 #pragma mark - NSFetchedResultControllerDelegate
@@ -279,99 +251,6 @@
     self.refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:title];
     
     [self.tableView endUpdates];
-}
-
-#pragma mark - MMLinkLabelDelegate
-
-- (void)linkLabel:(MMLinkLabel *)label didTapOnLink:(NSString *)link {
-    SFSafariViewController *safariViewController = [[SFSafariViewController alloc] initWithURL:[NSURL URLWithString:link]];
-    safariViewController.modalPresentationStyle = UIModalPresentationFullScreen;
-    safariViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    
-    [self presentViewController:safariViewController animated:YES completion:nil];
-}
-
-#pragma mark - MMTweetTableViewCellDelegate 
-
-- (void)replyButtonTappedForCell:(MMTweetTableViewCell *)cell {
-    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
-    
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    
-    UINavigationController *navigationController = [storyboard instantiateViewControllerWithIdentifier:@"Composer"];
-    
-    MMComposerViewController *composerViewController = (MMComposerViewController *)navigationController.topViewController;
-    [composerViewController setInReplyToStatusID:tweet.tweetID.stringValue username:tweet.hasUser.screenName];
-    
-    [self presentViewController:navigationController animated:YES completion:nil];
-}
-
-- (void)retweetButtonTappedForCell:(MMTweetTableViewCell *)cell {
-    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
-    
-    [[MMTwitterManager sharedManager] changeRetweetStatusOfTweet:tweet];
-}
-
-- (void)likeButtonTappedForCell:(MMTweetTableViewCell *)cell {
-    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
-    
-    [[MMTwitterManager sharedManager] changeFavoriteStatusOfTweet:tweet compeleted:nil];
-}
-
-- (void)moreButtonTappedForCell:(MMTweetTableViewCell *)cell {
-    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
-    
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    UIAlertAction *shareAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Share via Direct Message", nil) style:UIAlertActionStyleDefault handler:nil];
-    [alert addAction:shareAction];
-    
-    if ([tweet.hasUser.userID.stringValue isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"TwitterUserID"]] && !tweet.retweeted.boolValue) {
-        UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Delete", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
-            [[MMTwitterManager sharedManager] deleteTweet:tweet competed:nil];
-        }];
-        [alert addAction:deleteAction];
-    } else {
-        UIAlertAction *muteAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Mute", nil)  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
-            [[MMTwitterManager sharedManager] changeUser:tweet.hasUser mutedStatus:YES];
-        }];
-        
-        [alert addAction:muteAction];
-        
-        UIAlertAction *blockAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Block", nil) style:UIAlertActionStyleDefault handler:nil];
-        [alert addAction:blockAction];
-    }
-    
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil) style:UIAlertActionStyleCancel handler:nil];
-    [alert addAction:cancelAction];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (void)didTapProfileImageForCell:(MMTweetTableViewCell *)cell {
-    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
-    
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    
-    UINavigationController *navigationControlle = [storyboard instantiateViewControllerWithIdentifier:@"Profile"];
-    
-    MMProfileTableViewController *profileTableViewController = (MMProfileTableViewController *)[navigationControlle topViewController];
-    profileTableViewController.user = tweet.hasUser;
-    
-    [self presentViewController:navigationControlle animated:YES completion:nil];
-    
-    
-}
-
-#pragma mark - MMTweetWithImageTableViewCellDelegate
-
-- (void)didTapOnTweetImageView:(MMTweetWithImageTableViewCell *)cell {
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    
-    MMImageDetailsViewController *destinationViewController = [storyboard instantiateViewControllerWithIdentifier:@"ImageViewController"];
-    destinationViewController.tweetInfo = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
-    
-    [self presentViewController:destinationViewController animated:YES completion:nil];
 }
 
 @end

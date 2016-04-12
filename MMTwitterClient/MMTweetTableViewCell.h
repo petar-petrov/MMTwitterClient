@@ -38,6 +38,6 @@
 - (void)likeButtonTappedForCell:(MMTweetTableViewCell *)cell;
 - (void)moreButtonTappedForCell:(MMTweetTableViewCell *)cell;
 
-
+- (void)didTapProfileImageForCell:(MMTweetTableViewCell *)cell;
 
 @end

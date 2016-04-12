@@ -16,7 +16,8 @@
 
 + (instancetype)sharedManager;
 
-- (void)addTweets:(NSArray *)tweets;
+- (void)addTweets:(NSArray *)tweets homeTimeline:(BOOL)homeTimeline
+;
 
 - (NSArray <Tweet *>*)getUserTimeline;
 - (NSArray <Tweet *>*)getHomeTimeline;
@@ -33,4 +34,6 @@
 - (BOOL)deleteTweet:(Tweet *)tweet error:(NSError **)error;
 - (void)tweetRetweeted:(Tweet *)tweet;
 - (void)updateTweet:(Tweet *)tweet favoriedStatus:(BOOL)status;
+
+- (void)deleteNonUserOrHomeTimelineTweets;
 @end
