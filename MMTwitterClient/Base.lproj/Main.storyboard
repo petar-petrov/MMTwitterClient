@@ -93,14 +93,23 @@
                                         <constraint firstAttribute="height" constant="60" id="iea-j5-561"/>
                                     </constraints>
                                 </view>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ysu-2L-e2w">
+                                    <rect key="frame" x="88" y="108" width="492" height="21"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
                             </subviews>
                             <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                             <constraints>
+                                <constraint firstAttribute="trailing" secondItem="ysu-2L-e2w" secondAttribute="trailing" constant="20" id="Gvy-Id-X2C"/>
                                 <constraint firstItem="RDo-ME-y9x" firstAttribute="top" secondItem="zpl-hS-sme" secondAttribute="top" constant="70" id="IXd-EQ-WTx"/>
+                                <constraint firstItem="ysu-2L-e2w" firstAttribute="leading" secondItem="RDo-ME-y9x" secondAttribute="trailing" constant="8" id="Nef-1y-zaw"/>
                                 <constraint firstItem="17h-RN-ZNO" firstAttribute="top" secondItem="zpl-hS-sme" secondAttribute="top" id="P54-IP-Ruz"/>
                                 <constraint firstAttribute="trailing" secondItem="17h-RN-ZNO" secondAttribute="trailing" id="Rlx-PF-udj"/>
                                 <constraint firstItem="17h-RN-ZNO" firstAttribute="leading" secondItem="zpl-hS-sme" secondAttribute="leading" id="lN9-3n-Sap"/>
                                 <constraint firstItem="RDo-ME-y9x" firstAttribute="leading" secondItem="zpl-hS-sme" secondAttribute="leading" constant="20" id="nfR-5f-48H"/>
+                                <constraint firstItem="ysu-2L-e2w" firstAttribute="top" secondItem="17h-RN-ZNO" secondAttribute="bottom" constant="8" id="tBR-LL-2Et"/>
                                 <constraint firstItem="RDo-ME-y9x" firstAttribute="leading" secondItem="zpl-hS-sme" secondAttribute="leading" constant="20" id="tq4-De-Aei"/>
                             </constraints>
                             <variation key="default">
@@ -135,6 +144,7 @@
                         <outlet property="profileBackgroundImageView" destination="17h-RN-ZNO" id="hJB-qG-mPc"/>
                         <outlet property="profileImageBackgroundView" destination="RDo-ME-y9x" id="mOr-Ue-5GU"/>
                         <outlet property="profileImageView" destination="INa-UL-J0a" id="wGl-k6-0bk"/>
+                        <outlet property="screenNameLabel" destination="ysu-2L-e2w" id="cQL-ZT-CFC"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xa2-q6-fac" userLabel="First Responder" sceneMemberID="firstResponder"/>

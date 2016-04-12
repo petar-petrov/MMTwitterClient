@@ -173,7 +173,7 @@ static NSString *const kTableViewCellIdentifier = @"UserTimelineCell";
 
 - (void)updateHomeTimeline {
     [[MMTwitterManager sharedManager] getUserTimelineWithCompletion:^(NSError *error) {
-        NSString *title = [((NSDate *)[[NSUserDefaults standardUserDefaults] valueForKey:kTwitterHomeTimelineKey]) dateAsStringFormattedForRefreshControllTitle];
+        NSString *title = [((NSDate *)[[NSUserDefaults standardUserDefaults] valueForKey:kTwitterUserTimelineKey]) dateAsStringFormattedForRefreshControllTitle];
         self.refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:title];
         
         if (self.refreshControl.isRefreshing) {

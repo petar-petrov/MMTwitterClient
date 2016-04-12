@@ -8,6 +8,9 @@
 
 #import "MMProfileTableViewController.h"
 
+#import "MMImageDetailsViewController.h"
+#import "MMComposerViewController.h"
+
 #import "MMTwitterManager.h"
 #import "MMTwitterDataManager.h"
 #import "MMTwitterDataStore.h"
@@ -29,6 +32,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *profileBackgroundImageView;
 @property (weak, nonatomic) IBOutlet UIView *profileImageBackgroundView;
 @property (weak, nonatomic) IBOutlet UIImageView *profileImageView;
+@property (weak, nonatomic) IBOutlet UILabel *screenNameLabel;
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
@@ -81,6 +85,8 @@
     [self.profileImageView psetImageWithURLString:self.user.profileImageURL placeholder:nil];
     
     [self.profileBackgroundImageView psetImageWithURLString:self.user.profileBackgroundImageURL placeholder:nil];
+    
+    self.screenNameLabel.text = [@"@" stringByAppendingString:self.user.screenName];
     
     [self.tableView registerNib:[UINib nibWithNibName:@"MMTweetTableViewCell" bundle:nil]
          forCellReuseIdentifier:@"Cell"];
@@ -252,5 +258,74 @@
     
     [self.tableView endUpdates];
 }
+
+#pragma mark - MMTweetTableViewCellDelegate
+
+- (void)replyButtonTappedForCell:(MMTweetTableViewCell *)cell {
+    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    
+    UINavigationController *navigationController = [storyboard instantiateViewControllerWithIdentifier:@"Composer"];
+    
+    MMComposerViewController *composerViewController = (MMComposerViewController *)navigationController.topViewController;
+    [composerViewController setInReplyToStatusID:tweet.tweetID.stringValue username:tweet.hasUser.screenName];
+    
+    [self presentViewController:navigationController animated:YES completion:nil];
+}
+
+- (void)retweetButtonTappedForCell:(MMTweetTableViewCell *)cell {
+    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
+    
+    [[MMTwitterManager sharedManager] changeRetweetStatusOfTweet:tweet];
+}
+
+- (void)likeButtonTappedForCell:(MMTweetTableViewCell *)cell {
+    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
+    
+    [[MMTwitterManager sharedManager] changeFavoriteStatusOfTweet:tweet compeleted:nil];
+}
+
+- (void)moreButtonTappedForCell:(MMTweetTableViewCell *)cell {
+    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *shareAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Share via Direct Message", nil) style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:shareAction];
+    
+    if ([tweet.hasUser.userID.stringValue isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"TwitterUserID"]] && !tweet.retweeted.boolValue) {
+        UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Delete", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+            [[MMTwitterManager sharedManager] deleteTweet:tweet competed:nil];
+        }];
+        [alert addAction:deleteAction];
+    } else {
+        UIAlertAction *muteAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Mute", nil)  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+            [[MMTwitterManager sharedManager] changeUser:tweet.hasUser mutedStatus:YES];
+        }];
+        
+        [alert addAction:muteAction];
+        
+        UIAlertAction *blockAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Block", nil) style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:blockAction];
+    }
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil) style:UIAlertActionStyleCancel handler:nil];
+    [alert addAction:cancelAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+#pragma mark - MMTweetWithImageTableViewCellDelegate
+
+- (void)didTapOnTweetImageView:(MMTweetWithImageTableViewCell *)cell {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    
+    MMImageDetailsViewController *destinationViewController = [storyboard instantiateViewControllerWithIdentifier:@"ImageViewController"];
+    destinationViewController.tweetInfo = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
+    
+    [self presentViewController:destinationViewController animated:YES completion:nil];
+}
+
 
 @end
