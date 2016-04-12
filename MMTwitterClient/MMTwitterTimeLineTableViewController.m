@@ -21,10 +21,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[MMTwitterManager sharedManager] getUserTimelineWithCompletion:^(NSArray *tweets,NSUInteger sinceID, NSError *error){
-        NSLog(@"since id %ld", sinceID);
-        
-        self.timelineTweets = tweets;
+    [[MMTwitterManager sharedManager] getUserTimelineWithCompletion:^(NSError *error){
         [self.tableView reloadData];
     }];
     

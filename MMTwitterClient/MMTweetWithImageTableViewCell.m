@@ -18,31 +18,27 @@
 
 @implementation MMTweetWithImageTableViewCell
 
+@dynamic delegate;
+
+#pragma mark - Custom Accessors
+
+- (void)setDelegate:(id<MMTweetWithImageTableViewCellDelegate>)delegate {
+    [super setDelegate:delegate];
+}
+
+- (id <MMTweetWithImageTableViewCellDelegate> )delegate {
+    return [super delegate];
+}
+
+#pragma mark -
+
 - (void)awakeFromNib {
     [super awakeFromNib];
     
-//    [self.tweetImageView addObserver:self forKeyPath:@"image" options:NSKeyValueObservingOptionNew context:nil];
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
     
+    [self.tweetImageView addGestureRecognizer:tapGesture];
 }
-
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
-////    NSLog(@"image bounds %@", NSStringFromCGSize(self.tweetImageView.image.size) );
-//    
-//    [self layoutIfNeeded];
-//    if (self.tweetImageView.image.size.height > 0) {
-//        CGFloat containerWidth = self.containerView.bounds.size.width;
-////        CGFloat containerHeight = self.containerView.bounds.size.height;
-//        
-//        CGFloat ratio = self.tweetImageView.image.size.height / self.tweetImageView.image.size.width;
-//        
-////        NSLog(@"retion %.2f", ratio);
-//        
-//        
-//        self.heightConstraint_TweetImageView.constant = ratio * containerWidth;
-//    }
-//    
-//    [self layoutIfNeeded];
-//}
 
 - (void)layoutSubviews {
     [super layoutSubviews];
@@ -50,6 +46,16 @@
     self.containerView.layer.masksToBounds = YES;
     
     [super layoutSubviews];
+}
+
+#pragma mark - Private
+
+- (void)handleTap:(UITapGestureRecognizer *)gesture {
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        if ([self.delegate respondsToSelector:@selector(didTapOnTweetImageView:)]) {
+            [self.delegate didTapOnTweetImageView:self];
+        }
+    }
 }
 
 @end

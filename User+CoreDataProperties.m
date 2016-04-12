@@ -2,7 +2,7 @@
 //  User+CoreDataProperties.m
 //  MMTwitterClient
 //
-//  Created by Petar Petrov on 23/03/2016.
+//  Created by Petar Petrov on 11/04/2016.
 //  Copyright © 2016 Petar Petrov. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -14,10 +14,11 @@
 @implementation User (CoreDataProperties)
 
 @dynamic createdAt;
-@dynamic userID;
 @dynamic name;
 @dynamic profileImageURL;
 @dynamic screenName;
+@dynamic userID;
+@dynamic muted;
 @dynamic tweets;
 
 @end

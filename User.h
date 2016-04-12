@@ -2,7 +2,7 @@
 //  User.h
 //  MMTwitterClient
 //
-//  Created by Petar Petrov on 23/03/2016.
+//  Created by Petar Petrov on 11/04/2016.
 //  Copyright © 2016 Petar Petrov. All rights reserved.
 //
 

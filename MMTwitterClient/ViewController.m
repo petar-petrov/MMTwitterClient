@@ -40,7 +40,7 @@
 
 - (IBAction)login:(id)sender {
     if (self.loggedIn) {
-        [[MMTwitterManager sharedManager] logout];
+        
         self.showTimelineButton.enabled = NO;
         [self.loginButton setTitle:NSLocalizedString(@"Log In", nil) forState:UIControlStateNormal];
         self.loggedIn = NO;

@@ -9,7 +9,7 @@
 #import "MMLinkLabel.h"
 #import "NSMutableAttributedString+TwitterLinks.h"
 
-@interface MMLinkLabel ()
+@interface MMLinkLabel () <UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) NSLayoutManager *layoutManager;
 @property (strong, nonatomic) NSTextContainer *textContainer;
@@ -70,7 +70,10 @@
 - (void)configureLabel {
     
     UITapGestureRecognizer *tapGestureRecongnizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+//    tapGestureRecongnizer.delegate = self;
+    
     [self addGestureRecognizer:tapGestureRecongnizer];
+    
     
     // Create instances of NSLayoutManager, NSTextContainer and NSTextStorage
     self.layoutManager = [[NSLayoutManager alloc] init];
@@ -113,5 +116,19 @@
     
     
 }
+
+#pragma mark - UIGestureRecognizerDelegate
+
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+//{
+//    if ([touch.view isDescendantOfView:autocompleteTableView]) {
+//        
+//        // Don't let selections of auto-complete entries fire the
+//        // gesture recognizer
+//        return NO;
+//    }
+//    
+//    return YES;
+//}
 
 @end

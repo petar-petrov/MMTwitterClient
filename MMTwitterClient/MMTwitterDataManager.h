@@ -24,7 +24,13 @@
 - (NSUInteger)sinceIDForUserTimeline;
 - (NSUInteger)sinceIDForHomeTimeline;
 
+-(NSArray <User*>*)mutedUsers;
+- (void)updateUser:(User *)user mutedStatus:(BOOL)status;
+
 
 - (User *)getUserForID:(NSNumber *)userID;
 
+- (BOOL)deleteTweet:(Tweet *)tweet error:(NSError **)error;
+- (void)tweetRetweeted:(Tweet *)tweet;
+- (void)updateTweet:(Tweet *)tweet favoriedStatus:(BOOL)status;
 @end

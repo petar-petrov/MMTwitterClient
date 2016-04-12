@@ -17,6 +17,7 @@
 #import "MMTweetTableViewCell.h"
 #import "MMImageTweetTableViewCell.h"
 #import "MMTweetWithImageTableViewCell.h"
+#import "MMComposerViewController.h"
 
 #import "UIImageView+Networking.h"
 #import "NSDate+TwitterDate.h"
@@ -28,7 +29,7 @@
 @import CoreData;
 @import SafariServices;
 
-@interface MMHomeTimelineTableViewController () <NSFetchedResultsControllerDelegate, MMLinkLabelDelegate>
+@interface MMHomeTimelineTableViewController () <NSFetchedResultsControllerDelegate, MMLinkLabelDelegate, MMTweetTableViewCellDelegate>
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
@@ -44,6 +45,8 @@
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         
         request.entity = [NSEntityDescription entityForName:kDataStoreTweetEntityName inManagedObjectContext:[MMTwitterDataStore defaultStore].mainContext];
+        
+        request.predicate = [NSPredicate predicateWithFormat:@"retweeted == NO"];
         
         request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:NO]];
         
@@ -87,8 +90,6 @@
     [self.tableView registerNib:[UINib nibWithNibName:@"MMTweetWithImageTableViewCell" bundle:nil]
          forCellReuseIdentifier:@"ImageCell"];
     
-    self.tableView.rowHeight = UITableViewAutomaticDimension;
-    
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(didRefreshHomeTimeline:) forControlEvents:UIControlEventValueChanged];
     
@@ -99,6 +100,8 @@
     }
     
     self.refreshControl = refreshControl;
+    
+    [self updateHomeTimeline];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -108,20 +111,18 @@
 
 #pragma mark - UITableViewDelegate
 
-- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 120.0f;
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    return UITableViewAutomaticDimension;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    MMTweetTableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:indexPath];
     
-    if ([cell isMemberOfClass:[MMTweetWithImageTableViewCell class]]) {
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        
-        MMImageDetailsViewController *dvc = [storyboard instantiateViewControllerWithIdentifier:@"ImageViewController"];
-        dvc.tweetInfo = (Tweet *)[self.fetchedResultsController objectAtIndexPath:indexPath];
-        
-        [self presentViewController:dvc animated:YES completion:nil];
+    if ([tweet.mediaType isEqualToString:@"photo"]) {
+        return 387.0f;
+    } else {
+        return 136.0f;
     }
 }
 
@@ -141,8 +142,6 @@
     Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:indexPath];
     
     MMTweetTableViewCell *cell = nil;
-    
-//    NSLog(@"Media type: %@", tweet.mediaType);
     
     if ([tweet.mediaType isEqualToString:@"photo"]) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"ImageCell"];
@@ -176,18 +175,48 @@
     cell.relativeDateLabel.text = relativeDate;
     cell.message.attributedText = attributedMessage;
     cell.message.delegate = self;
+    cell.delegate = self;
 
     [cell.profileImageView psetImageWithURLString:user.profileImageURL placeholder:nil];
+    
+    if ([tweet.hasUser.userID.stringValue isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"TwitterUserID"]]) {
+        cell.retweetButton.enabled = NO;
+    } else {
+        cell.retweetButton.enabled = YES;
+    }
+    
+    if (tweet.retweeted.boolValue) {
+        cell.retweetButton.enabled = YES;
+        [cell.retweetButton setTitle:@"Unretweet" forState:UIControlStateNormal];
+    } else {
+        [cell.retweetButton setTitle:@"Retweet" forState:UIControlStateNormal];
+    }
+    
+    if (tweet.favorited.boolValue) {
+        [cell.likeButton setTitle:@"Unlike" forState:UIControlStateNormal];
+    } else {
+        [cell.likeButton setTitle:@"Like" forState:UIControlStateNormal];
+    }
 }
 
 - (void)didRefreshHomeTimeline:(id)sender {
-    [[MMTwitterManager sharedManager] getHomeTimelineWithCompletion:^(NSArray *tweets, NSUInteger sinceID, NSError *error) {
-//        NSLog(@"%@", tweets);
-        
+    if ([MMTwitterManager sharedManager].isLoggedIn) {
+        [self updateHomeTimeline];
+    } else {
+        [self.refreshControl endRefreshing];
+    }
+    
+}
+
+- (void)updateHomeTimeline {
+    [[MMTwitterManager sharedManager] getHomeTimelineWithCompletion:^(NSError *error) {
         NSString *title = [((NSDate *)[[NSUserDefaults standardUserDefaults] valueForKey:kTwitterHomeTimelineKey]) dateAsStringFormattedForRefreshControllTitle];
         self.refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:title];
         
-        [self.refreshControl endRefreshing];
+        if (self.refreshControl.isRefreshing) {
+            [self.refreshControl endRefreshing];
+        }
+        
     }];
 }
 
@@ -260,4 +289,73 @@
     
     [self presentViewController:safariViewController animated:YES completion:nil];
 }
+
+#pragma mark - MMTweetTableViewCellDelegate 
+
+- (void)replyButtonTappedForCell:(MMTweetTableViewCell *)cell {
+    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    
+    UINavigationController *navigationController = [storyboard instantiateViewControllerWithIdentifier:@"Composer"];
+    
+    MMComposerViewController *composerViewController = (MMComposerViewController *)navigationController.topViewController;
+    [composerViewController setInReplyToStatusID:tweet.tweetID.stringValue username:tweet.hasUser.screenName];
+    
+    [self presentViewController:navigationController animated:YES completion:nil];
+}
+
+- (void)retweetButtonTappedForCell:(MMTweetTableViewCell *)cell {
+    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
+    
+    [[MMTwitterManager sharedManager] changeRetweetStatusOfTweet:tweet];
+}
+
+- (void)likeButtonTappedForCell:(MMTweetTableViewCell *)cell {
+    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
+    
+    [[MMTwitterManager sharedManager] changeFavoriteStatusOfTweet:tweet compeleted:nil];
+}
+
+- (void)moreButtonTappedForCell:(MMTweetTableViewCell *)cell {
+    Tweet *tweet = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *shareAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Share via Direct Message", nil) style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:shareAction];
+    
+    if ([tweet.hasUser.userID.stringValue isEqualToString:[[NSUserDefaults standardUserDefaults] valueForKey:@"TwitterUserID"]] && !tweet.retweeted.boolValue) {
+        UIAlertAction *deleteAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Delete", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+            [[MMTwitterManager sharedManager] deleteTweet:tweet competed:nil];
+        }];
+        [alert addAction:deleteAction];
+    } else {
+        UIAlertAction *muteAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Mute", nil)  style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+            [[MMTwitterManager sharedManager] changeUser:tweet.hasUser mutedStatus:YES];
+        }];
+        
+        [alert addAction:muteAction];
+        
+        UIAlertAction *blockAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Block", nil) style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:blockAction];
+    }
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", nil) style:UIAlertActionStyleCancel handler:nil];
+    [alert addAction:cancelAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+#pragma mark - MMTweetWithImageTableViewCellDelegate
+
+- (void)didTapOnTweetImageView:(MMTweetWithImageTableViewCell *)cell {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    
+    MMImageDetailsViewController *destinationViewController = [storyboard instantiateViewControllerWithIdentifier:@"ImageViewController"];
+    destinationViewController.tweetInfo = (Tweet *)[self.fetchedResultsController objectAtIndexPath:[self.tableView indexPathForCell:cell]];
+    
+    [self presentViewController:destinationViewController animated:YES completion:nil];
+}
+
 @end

@@ -9,6 +9,8 @@
 #import "MMComposeTweetButtonTableViewController.h"
 #import <TwitterKit/TwitterKit.h>
 
+#import "MMComposerViewController.h"
+
 @implementation MMComposeTweetButtonTableViewController
 
 - (void)viewDidLoad {
@@ -22,17 +24,14 @@
 #pragma mark - Private
 
 - (void)composeTweet:(id)sender {
-    TWTRComposer *composer = [[TWTRComposer alloc] init];
+
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     
-    [composer setText:@"just setting up my Fabric!"];
+    UINavigationController *navigationController = [storyboard instantiateViewControllerWithIdentifier:@"Composer"];
     
-    [composer showFromViewController:self completion:^(TWTRComposerResult result) {
-        if (result == TWTRComposerResultCancelled) {
-            NSLog(@"Tweet compositoin cancelled");
-        } else {
-            NSLog(@"Sending Tweet!");
-        }
-    }];
+    [self presentViewController:navigationController animated:YES completion:nil];
+    
+    
 }
 
 @end
