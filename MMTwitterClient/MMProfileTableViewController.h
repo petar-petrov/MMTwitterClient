@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MMTimelineTableViewController.h"
 
 @class User;
 
-@interface MMProfileTableViewController : UITableViewController
+@interface MMProfileTableViewController : MMTimelineTableViewController 
 
 @property (strong, nonatomic) User *user;
 

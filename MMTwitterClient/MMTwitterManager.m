@@ -142,7 +142,7 @@ typedef void (^MMTwitterRequestSuccessBlock)(NSData *data, NSError *error);
                               id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
                               NSLog(@"%@", json);
                               
-                              [self.dataManager addTweets:json homeTimeline:NO];
+                              [self.dataManager addTweets:json];
                               [self updateLastUpdatedDateForTimelineKey:kTwitterUserTimelineKey];
                               
                               if (handler != nil) {
@@ -164,7 +164,7 @@ typedef void (^MMTwitterRequestSuccessBlock)(NSData *data, NSError *error);
                               id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
                               NSLog(@"%@", json);
                               
-                              [self.dataManager addTweets:json homeTimeline:NO];
+                              [self.dataManager addTweets:json];
                               [self updateLastUpdatedDateForTimelineKey:kTwitterUserTimelineKey];
                           }
                              failed:handler];
@@ -180,7 +180,7 @@ typedef void (^MMTwitterRequestSuccessBlock)(NSData *data, NSError *error);
                           completed:^(NSData *data, NSError *error){
                               id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
               
-                              [self.dataManager addTweets:json homeTimeline:YES];
+                              [self.dataManager addTweets:json];
                               [self updateLastUpdatedDateForTimelineKey:kTwitterHomeTimelineKey];
                               
                               if (handler != nil) {
@@ -262,6 +262,9 @@ typedef void (^MMTwitterRequestSuccessBlock)(NSData *data, NSError *error);
                          parameters:nil
                              method:kPostMethod
                           completed:^(NSData *data, NSError *error){
+                              id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+                              NSLog(@"%@", json);
+                              
                               if (tweet.retweeted.boolValue) {
                                   [self.dataManager deleteTweet:tweet error:nil];
                               }

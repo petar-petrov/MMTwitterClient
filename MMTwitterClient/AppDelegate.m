@@ -31,8 +31,6 @@
     
     [Fabric with:@[[Twitter class]]];
     
-    [[MMTwitterDataManager sharedManager] deleteNonUserOrHomeTimelineTweets];
-    
     ACAccountStore *accountStore = [[ACAccountStore alloc] init];
     ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
     

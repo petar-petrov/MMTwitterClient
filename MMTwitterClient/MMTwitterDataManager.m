@@ -59,7 +59,7 @@
 
 #pragma mark - Add/Delete Tweet/s
 
--(void)addTweets:(NSArray *)tweets homeTimeline:(BOOL)homeTimeline {
+-(void)addTweets:(NSArray *)tweets {
     
     [self.dataStore.defaultPrivateContext performBlock:^{
         if (tweets) {
@@ -70,7 +70,6 @@
                     BOOL flag = (index == (tweets.count - 1)) ? YES : NO;
                     
                     [self addTweet:tweets[index]
-                      homeTimeline:homeTimeline
                          inContext:self.dataStore.defaultPrivateContext
                               save:flag];
                 }
@@ -117,24 +116,6 @@
 - (NSUInteger)sinceIDForHomeTimeline {
     
     return 0;
-}
-
-- (void)deleteNonUserOrHomeTimelineTweets {
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    request.entity = [NSEntityDescription entityForName:kDataStoreTweetEntityName inManagedObjectContext:self.dataStore.mainContext];
-    
-    request.predicate = [NSPredicate predicateWithFormat:@"isUserTimeline == NO && isHomeTimeline == NO"];
-    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"createdAt" ascending:YES]];
-    
-    NSArray *fetchedTweets = [self.dataStore.mainContext executeFetchRequest:request error:nil]; // no error handling
-    
-    for (Tweet *tweet in fetchedTweets) {
-        [self.dataStore.mainContext deleteObject:tweet];
-    }
-    
-    if ([self.dataStore.mainContext save:nil]) {
-        
-    }
 }
 
 #pragma mark - 
@@ -196,7 +177,7 @@
 
 #pragma mark - Private
 
-- (void)addTweet:(NSDictionary *)tweetInfo homeTimeline:(BOOL)homeTimeline inContext:(NSManagedObjectContext *)context save:(BOOL)flag {
+- (void)addTweet:(NSDictionary *)tweetInfo inContext:(NSManagedObjectContext *)context save:(BOOL)flag {
     Tweet *tweet = [self getTweetForID:tweetInfo[@"id"] inContext:context];
     
     if (tweet == nil || (!tweet.retweeted.boolValue && ((NSNumber *)tweetInfo[@"retweeted"]).boolValue)) {
@@ -209,7 +190,6 @@
         tweet.retweeted = [tweetInfo valueForKey:@"retweeted"];
         tweet.favorited = [tweetInfo valueForKey:@"favorited"];
         tweet.tweetID = [tweetInfo valueForKey:@"id"];
-        tweet.isHomeTimeline = @(homeTimeline);
         
         if (tweetInfo[@"entities"][@"media"]) {
             tweet.mediaURL = tweetInfo[@"entities"][@"media"][0][@"media_url_https"];
@@ -223,7 +203,7 @@
         
         if ([userID isEqualToString:storedUserID]) {
             tweet.isUserTimeline = @(YES);
-            tweet.isHomeTimeline = @(NO);
+
         } else {
             tweet.isUserTimeline = @(NO);
         }
